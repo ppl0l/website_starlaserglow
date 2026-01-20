@@ -80,7 +80,7 @@ function ContactForm() {
 const sendBookingRequest = async (formData) => {
   try {
     // Замените на ваш реальный URL с Render
-    const API_URL = 'https://beauty-server.onrender.com/api/booking';
+    const API_URL = 'https://beauty-bot-server.onrender.com/api/booking';
     
     const response = await fetch(API_URL, {
       method: 'POST',
