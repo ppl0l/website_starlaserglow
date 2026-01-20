@@ -1,9 +1,23 @@
-import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { FaInstagram, FaTelegram, FaWhatsapp, FaCalendarAlt, FaTimes, FaMapMarkerAlt, FaPhone, FaClock } from 'react-icons/fa';
+import { Modal } from 'react-bootstrap';
 
 function MassageServices() {
   const cardsRef = useRef([]);
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedService, setSelectedService] = useState('');
+
+  // Контактная информация
+  const contactInfo = {
+    address: "Московская область, г.Одинцово, ул.Северная 15",
+    phone: "+7 999 507 05 55",
+    hours: "Ежедневно: 10:00 - 22:00",
+    yclientsUrl: "https://n1947028.yclients.com/",
+    instagramUrl: "https://www.instagram.com/star_laser_glow",
+    telegramUrl: "https://t.me/star_laser_glow",
+    whatsappUrl: "https://wa.me/79995070555",
+    googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Московская область, г.Одинцово, ул.Северная 15")}`
+  };
 
   const handleCardHover = (index, isHovering) => {
     const card = cardsRef.current[index];
@@ -15,28 +29,34 @@ function MassageServices() {
       : '0 5px 15px rgba(0, 0, 0, 0.05)';
   };
 
-const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
-  let fullServiceName = serviceTitle;
-  
-  if (isCorrection && subtitle) {
-    // Для коррекции: только подзаголовок
-    fullServiceName = subtitle;
-  } else if (subtitle) {
-    // Для других: оба названия
-    fullServiceName = `${serviceTitle} - ${subtitle}`;
-  }
-  
-  // Определяем категорию
-  let category = 'Аппаратный массаж';
-  if (isCorrection) {
-    category = 'Аппаратная коррекция фигуры';
-  }
-  
-  // Сохраняем название услуги с категорией
-  localStorage.setItem('selectedService', `${category}: ${fullServiceName}`);
-  // Переходим на страницу контактов
-  navigate('/contact');
-};
+  const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
+    let fullServiceName = serviceTitle;
+    
+    if (isCorrection && subtitle) {
+      fullServiceName = subtitle;
+    } else if (subtitle) {
+      fullServiceName = `${serviceTitle} - ${subtitle}`;
+    }
+    
+    let category = 'Аппаратный массаж';
+    if (isCorrection) {
+      category = 'Аппаратная коррекция фигуры';
+    }
+    
+    const serviceWithCategory = `${category}: ${fullServiceName}`;
+    setSelectedService(serviceWithCategory);
+    localStorage.setItem('selectedService', serviceWithCategory);
+    setShowModal(true);
+  };
+
+  const handleYclientsClick = () => {
+    window.open(contactInfo.yclientsUrl, '_blank');
+    setShowModal(false);
+  };
+
+  const handleSocialClick = (url) => {
+    window.open(url, '_blank');
+  };
 
   const services = [
     {
@@ -137,7 +157,8 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
       price: [
         { type: "1 сеанс", value: "1 500 ₽" }
       ],
-      badgeColor: "var(--color-black)"
+      badgeColor: "var(--color-black)",
+      isVibromassage: true
     },
     {
       title: "Стратосфера для тела",
@@ -331,200 +352,27 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
     );
   };
 
-  return (
-    <div className="section-light" style={{ 
-      padding: '80px 0',
-      position: 'relative',
-      marginBottom: '80px'
-    }}>
-      <div className="container-huge" style={{ position: 'relative', zIndex: '2' }}>
-        <div className="grid-huge" style={{ marginBottom: '60px' }}>
-          <div style={{ gridColumn: 'span 4' }}>
-            <div style={{
-              fontSize: '12px',
-              letterSpacing: '2px',
-              color: 'var(--color-accent)',
-              marginBottom: '20px',
-              fontWeight: '500',
-              textTransform: 'uppercase'
-            }}>
-              Услуги
-            </div>
-            <h2 id="massage" style={{ 
-              marginBottom: '30px', 
-              color: 'var(--color-black)',
-              fontSize: 'clamp(2rem, 5vw, 3rem)'
-            }}>
-              Аппаратный массаж
-            </h2>
-          </div>
-          
-          <div style={{ gridColumn: 'span 8' }}>
-            <p style={{ 
-              fontSize: '18px', 
-              fontWeight: '300',
-              opacity: '0.8',
-              color: 'var(--color-dark-gray)',
-              maxWidth: '600px',
-              lineHeight: '1.6'
-            }}>
-              Современные технологии коррекции фигуры без операций. Эффективное воздействие 
-              на проблемные зоны для достижения желаемых форм.
-            </p>
-          </div>
-        </div>
-        
-<div className="grid-huge" style={{ gap: '30px', marginBottom: '80px' }}>
-  {services.map((service, index) => {
-    // Определяем позицию для Стратосферы
-    if (service.title === "Стратосфера для тела") {
-      return (
-        <div 
-          key={`service-${index}`}
-          style={{ 
-            gridColumn: '5 / span 4', // Начинается с 5 колонки, занимает 4
-            cursor: 'pointer'
-          }}
-          ref={el => cardsRef.current[index] = el}
-          onMouseEnter={() => handleCardHover(index, true)}
-          onMouseLeave={() => handleCardHover(index, false)}
-        >
-          <div className="card-huge" style={{ 
-            height: '100%',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '25px'
-          }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'flex-start',
-              marginBottom: '20px'
-            }}>
-              <div>
-                <h3 style={{ 
-                  fontSize: '1.5rem',
-                  fontWeight: '600',
-                  color: 'var(--color-black)',
-                  marginBottom: '5px'
-                }}>
-                  {service.title}
-                </h3>
-              </div>
-              <span style={{ 
-                fontSize: '11px',
-                fontWeight: '500',
-                letterSpacing: '2px',
-                padding: '6px 12px',
-                background: service.badgeColor,
-                color: service.badgeColor === 'var(--color-black)' ? 'var(--color-white)' : 'var(--color-white)',
-                borderRadius: '20px',
-                textTransform: 'uppercase'
-              }}>
-                {service.time}
-              </span>
-            </div>
-            
-            <p style={{ 
-              marginBottom: '20px',
-              opacity: '0.7',
-              color: 'var(--color-dark-gray)',
-              fontSize: '16px',
-              lineHeight: '1.6',
-              flex: '1'
-            }}>
-              {service.description}
-            </p>
-            
-            {service.features && (
-              <div style={{ marginBottom: '25px' }}>
-                <div style={{ 
-                  fontSize: '10px',
-                  fontWeight: '500',
-                  letterSpacing: '1.5px',
-                  color: 'var(--color-dark-gray)',
-                  marginBottom: '12px',
-                  opacity: '0.7',
-                  textTransform: 'uppercase'
-                }}>
-                  Преимущества:
-                </div>
-                <ul style={{ 
-                  listStyle: 'none', 
-                  padding: '0',
-                  margin: '0'
-                }}>
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} style={{ 
-                      fontSize: '14px',
-                      color: 'var(--color-dark-gray)',
-                      marginBottom: '6px',
-                      paddingLeft: '18px',
-                      position: 'relative',
-                      lineHeight: '1.4'
-                    }}>
-                      <span style={{
-                        position: 'absolute',
-                        left: '0',
-                        color: 'var(--color-accent)',
-                        fontSize: '12px'
-                      }}>✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {renderPriceBlock(service.price)}
-            
-            <button
-              onClick={() => handleBookClick(service.title)}
-              className="btn-huge"
-              style={{
-                fontSize: '11px',
-                fontWeight: '500',
-                letterSpacing: '2px',
-                textDecoration: 'none',
-                textAlign: 'center',
-                display: 'block',
-                padding: '12px 24px',
-                border: '1px solid var(--color-accent)',
-                color: 'var(--color-accent)',
-                background: 'transparent',
-                transition: 'all 0.3s ease',
-                marginTop: 'auto',
-                cursor: 'pointer',
-                width: '100%'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = 'var(--color-accent)';
-                e.currentTarget.style.color = 'var(--color-white)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'var(--color-accent)';
-              }}
-            >
-              Записаться
-            </button>
-          </div>
-        </div>
-      );
-    }
+  const renderServiceCard = (service, index, isCorrection = false) => {
+    const isVibromassage = service.title === "Вибромассаж" && !isCorrection;
     
-    // Для всех остальных услуг
     return (
       <div 
-        key={`service-${index}`}
+        key={isCorrection ? `correction-${index}` : `service-${index}`}
+        className="service-card"
         style={{ 
-          gridColumn: 'span 4',
+          width: '100%',
+          minWidth: '300px',
           cursor: 'pointer'
         }}
-        ref={el => cardsRef.current[index] = el}
-        onMouseEnter={() => handleCardHover(index, true)}
-        onMouseLeave={() => handleCardHover(index, false)}
+        ref={el => {
+          if (isCorrection) {
+            cardsRef.current[services.length + index] = el;
+          } else {
+            cardsRef.current[index] = el;
+          }
+        }}
+        onMouseEnter={() => handleCardHover(isCorrection ? services.length + index : index, true)}
+        onMouseLeave={() => handleCardHover(isCorrection ? services.length + index : index, false)}
       >
         <div className="card-huge" style={{ 
           height: '100%',
@@ -537,17 +385,43 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'flex-start',
-            marginBottom: '20px'
+            marginBottom: isCorrection || isVibromassage ? '15px' : '20px'
           }}>
             <div>
-              <h3 style={{ 
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: 'var(--color-black)',
-                marginBottom: '5px'
-              }}>
-                {service.title}
-              </h3>
+              {!isCorrection ? (
+                // Для обычных услуг - черный заголовок
+                <h3 style={{ 
+                  fontSize: isVibromassage ? '1.3rem' : '1.5rem',
+                  fontWeight: '600',
+                  color: 'var(--color-black)',
+                  marginBottom: '5px'
+                }}>
+                  {service.title}
+                </h3>
+              ) : (
+                // Для коррекции - черный заголовок "Аппаратная коррекция фигуры" 
+                // и розовый подзаголовок
+                <div>
+                  <h3 style={{ 
+                    fontSize: '1.5rem',
+                    fontWeight: '600',
+                    color: 'var(--color-black)',
+                    marginBottom: '5px'
+                  }}>
+                    {service.title}
+                  </h3>
+                  {service.subtitle && (
+                    <div style={{
+                      fontSize: '1rem',
+                      fontWeight: '500',
+                      color: 'var(--color-accent)',
+                      marginBottom: '10px'
+                    }}>
+                      {service.subtitle}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <span style={{ 
               fontSize: '11px',
@@ -564,18 +438,19 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
           </div>
           
           <p style={{ 
-            marginBottom: '20px',
+            marginBottom: isVibromassage ? '0px' : '20px',
             opacity: '0.7',
             color: 'var(--color-dark-gray)',
-            fontSize: '16px',
+            fontSize: isCorrection || isVibromassage ? '15px' : '16px',
             lineHeight: '1.6',
-            flex: '1'
+            flex: isVibromassage ? '0' : '1'
           }}>
             {service.description}
           </p>
           
-          {service.features && (
-            <div style={{ marginBottom: '25px' }}>
+          {/* Особый порядок для вибромассажа - преимущества сразу после описания */}
+          {isVibromassage && service.features && (
+            <div style={{ marginBottom: '20px', flex: '1' }}>
               <div style={{ 
                 fontSize: '10px',
                 fontWeight: '500',
@@ -583,7 +458,8 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
                 color: 'var(--color-dark-gray)',
                 marginBottom: '12px',
                 opacity: '0.7',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                marginTop: '15px'
               }}>
                 Преимущества:
               </div>
@@ -614,10 +490,51 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
             </div>
           )}
           
+          {/* Обычный порядок для других услуг */}
+          {!isVibromassage && service.features && (
+            <div style={{ marginBottom: '25px', flex: '1' }}>
+              <div style={{ 
+                fontSize: '10px',
+                fontWeight: '500',
+                letterSpacing: '1.5px',
+                color: 'var(--color-dark-gray)',
+                marginBottom: '12px',
+                opacity: '0.7',
+                textTransform: 'uppercase'
+              }}>
+                {isCorrection ? 'Эффект:' : 'Преимущества:'}
+              </div>
+              <ul style={{ 
+                listStyle: 'none', 
+                padding: '0',
+                margin: '0'
+              }}>
+                {service.features.map((feature, idx) => (
+                  <li key={idx} style={{ 
+                    fontSize: isCorrection ? '13px' : '14px',
+                    color: 'var(--color-dark-gray)',
+                    marginBottom: '6px',
+                    paddingLeft: '18px',
+                    position: 'relative',
+                    lineHeight: '1.4'
+                  }}>
+                    <span style={{
+                      position: 'absolute',
+                      left: '0',
+                      color: 'var(--color-accent)',
+                      fontSize: '12px'
+                    }}>✓</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
           {renderPriceBlock(service.price)}
           
           <button
-            onClick={() => handleBookClick(service.title)}
+            onClick={() => handleBookClick(service.title, service.subtitle, isCorrection)}
             className="btn-huge"
             style={{
               fontSize: '11px',
@@ -649,155 +566,552 @@ const handleBookClick = (serviceTitle, subtitle = '', isCorrection = false) => {
         </div>
       </div>
     );
-  })}
-</div>
-        
-        <div className="grid-huge" style={{ gap: '30px' }}>
-          {correctionServices.map((service, index) => (
-            <div 
-              key={`correction-${index}`}
-              style={{ 
-                gridColumn: 'span 4',
-                cursor: 'pointer'
-              }}
-              ref={el => cardsRef.current[services.length + index] = el}
-              onMouseEnter={() => handleCardHover(services.length + index, true)}
-              onMouseLeave={() => handleCardHover(services.length + index, false)}
-            >
-              <div className="card-huge" style={{ 
-                height: '100%',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '25px'
+  };
+
+  return (
+    <>
+      <div className="section-light" style={{ 
+        padding: '80px 0',
+        position: 'relative',
+        marginBottom: '80px'
+      }}>
+        <div className="container-huge" style={{ position: 'relative', zIndex: '2' }}>
+          <div className="grid-huge" style={{ marginBottom: '60px' }}>
+            <div style={{ gridColumn: 'span 4' }}>
+              <div style={{
+                fontSize: '12px',
+                letterSpacing: '2px',
+                color: 'var(--color-accent)',
+                marginBottom: '20px',
+                fontWeight: '500',
+                textTransform: 'uppercase'
               }}>
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'flex-start',
-                  marginBottom: '15px'
-                }}>
-                  <div>
-                    <h3 style={{ 
-                      fontSize: '1.3rem', 
-                      fontWeight: '600',
-                      color: 'var(--color-black)',
-                      marginBottom: '5px'
-                    }}>
-                      {service.title}
-                    </h3>
-                    <div style={{
-                      fontSize: '1rem',
-                      fontWeight: '500',
-                      color: 'var(--color-accent)',
-                      marginBottom: '10px'
-                    }}>
-                      {service.subtitle}
-                    </div>
-                  </div>
-                  <span style={{ 
-                    fontSize: '11px',
-                    fontWeight: '500',
-                    letterSpacing: '2px',
-                    padding: '6px 12px',
-                    background: service.badgeColor,
-                    color: service.badgeColor === 'var(--color-black)' ? 'var(--color-white)' : 'var(--color-white)',
-                    borderRadius: '20px',
-                    textTransform: 'uppercase'
-                  }}>
-                    {service.time}
-                  </span>
-                </div>
-                
-                <p style={{ 
-                  marginBottom: '20px',
-                  opacity: '0.7',
-                  color: 'var(--color-dark-gray)',
-                  fontSize: '15px',
-                  lineHeight: '1.6',
-                  flex: '1'
-                }}>
-                  {service.description}
-                </p>
-                
-                {service.features && (
-                  <div style={{ marginBottom: '25px' }}>
-                    <div style={{ 
-                      fontSize: '10px',
-                      fontWeight: '500',
-                      letterSpacing: '1.5px',
-                      color: 'var(--color-dark-gray)',
-                      marginBottom: '12px',
-                      opacity: '0.7',
-                      textTransform: 'uppercase'
-                    }}>
-                      Эффект:
-                    </div>
-                    <ul style={{ 
-                      listStyle: 'none', 
-                      padding: '0',
-                      margin: '0'
-                    }}>
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} style={{ 
-                          fontSize: '13px',
-                          color: 'var(--color-dark-gray)',
-                          marginBottom: '6px',
-                          paddingLeft: '18px',
-                          position: 'relative',
-                          lineHeight: '1.4'
-                        }}>
-                          <span style={{
-                            position: 'absolute',
-                            left: '0',
-                            color: 'var(--color-accent)',
-                            fontSize: '12px'
-                          }}>✓</span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {renderPriceBlock(service.price)}
-                
-                <button
-                  onClick={() => handleBookClick(service.title, service.subtitle, true)}
-                  className="btn-huge"
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: '500',
-                    letterSpacing: '2px',
-                    textDecoration: 'none',
-                    textAlign: 'center',
-                    display: 'block',
-                    padding: '12px 24px',
-                    border: '1px solid var(--color-accent)',
-                    color: 'var(--color-accent)',
-                    background: 'transparent',
-                    transition: 'all 0.3s ease',
-                    marginTop: 'auto',
-                    cursor: 'pointer',
-                    width: '100%'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = 'var(--color-accent)';
-                    e.currentTarget.style.color = 'var(--color-white)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = 'var(--color-accent)';
-                  }}
-                >
-                  Записаться
-                </button>
+                Услуги
+              </div>
+              <h2 id="massage" style={{ 
+                marginBottom: '30px', 
+                color: 'var(--color-black)',
+                fontSize: 'clamp(2rem, 5vw, 3rem)'
+              }}>
+                Аппаратный массаж
+              </h2>
+            </div>
+            
+            <div style={{ gridColumn: 'span 8' }}>
+              <p style={{ 
+                fontSize: '18px', 
+                fontWeight: '300',
+                opacity: '0.8',
+                color: 'var(--color-dark-gray)',
+                maxWidth: '600px',
+                lineHeight: '1.6'
+              }}>
+                Современные технологии коррекции фигуры без операций. Эффективное воздействие 
+                на проблемные зоны для достижения желаемых форм.
+              </p>
+            </div>
+          </div>
+          
+          {/* Аппаратный массаж - адаптивная сетка */}
+          <div className="services-grid">
+            {services.map((service, index) => renderServiceCard(service, index, false))}
+          </div>
+          
+          {/* Аппаратная коррекция фигуры - адаптивная сетка */}
+          <div className="correction-grid">
+            {correctionServices.map((service, index) => renderServiceCard(service, index, true))}
+          </div>
+        </div>
+
+        {/* CSS для адаптивной сетки */}
+        <style jsx>{`
+          .services-grid,
+          .correction-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 80px;
+          }
+          
+          /* Стратосфера в центре на десктопе */
+          .services-grid > .service-card:nth-child(7) {
+            grid-column: 2;
+          }
+          
+          /* Планшетная версия (до 992px) */
+          @media (max-width: 992px) {
+            .services-grid,
+            .correction-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .services-grid > .service-card:nth-child(7) {
+              grid-column: auto;
+            }
+          }
+          
+          /* Мобильная версия (до 768px) */
+          @media (max-width: 768px) {
+            .services-grid,
+            .correction-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        `}</style>
+      </div>
+
+      {/* Модальное окно записи онлайн */}
+      <Modal 
+        show={showModal} 
+        onHide={() => setShowModal(false)}
+        centered
+        size="lg"
+        style={{
+          fontFamily: 'var(--font-primary)'
+        }}
+      >
+        <Modal.Header style={{ 
+          borderBottom: '1px solid rgba(0,0,0,0.1)', 
+          position: 'relative',
+          padding: '20px 30px'
+        }}>
+          <Modal.Title style={{ 
+            fontSize: '24px', 
+            fontWeight: '700',
+            color: 'var(--color-black)',
+            flex: '1'
+          }}>
+            Запись на консультацию
+          </Modal.Title>
+          <button 
+            onClick={() => setShowModal(false)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+              color: 'var(--color-dark-gray)',
+              transition: 'color 0.3s ease',
+              padding: '0',
+              lineHeight: '1'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-dark-gray)'}
+          >
+            <FaTimes />
+          </button>
+        </Modal.Header>
+        
+        <Modal.Body style={{ padding: '30px' }}>
+          {selectedService && (
+            <div style={{ 
+              marginBottom: '25px',
+              padding: '15px',
+              background: 'rgba(255, 0, 122, 0.05)',
+              borderLeft: '4px solid var(--color-accent)',
+              borderRadius: '0 8px 8px 0'
+            }}>
+              <div style={{ 
+                fontSize: '11px',
+                letterSpacing: '1.5px',
+                color: 'var(--color-accent)',
+                marginBottom: '8px',
+                fontWeight: '500',
+                textTransform: 'uppercase'
+              }}>
+                ВЫБРАННАЯ УСЛУГА
+              </div>
+              <div style={{ 
+                fontSize: '16px', 
+                fontWeight: '500', 
+                color: 'var(--color-black)',
+                lineHeight: '1.4'
+              }}>
+                {selectedService}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          )}
+          
+          <div style={{ marginBottom: '30px' }}>
+            <h3 style={{ 
+              fontSize: '14px',
+              letterSpacing: '2px',
+              color: 'var(--color-accent)',
+              marginBottom: '25px',
+              fontWeight: '500',
+              textTransform: 'uppercase'
+            }}>
+              ВЫБЕРИТЕ СПОСОБ СВЯЗИ
+            </h3>
+            
+            {/* YClients кнопка */}
+            <button
+              onClick={handleYclientsClick}
+              style={{
+                width: '100%',
+                padding: '18px 24px',
+                background: 'var(--color-accent)',
+                border: 'none',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                marginBottom: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = '#e6006e';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 0, 122, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'var(--color-accent)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <FaCalendarAlt size={20} />
+              Записаться через YCLIENTS
+            </button>
+            
+            <div style={{ 
+              textAlign: 'center', 
+              margin: '25px 0',
+              position: 'relative'
+            }}>
+              <span style={{
+                display: 'inline-block',
+                padding: '0 15px',
+                background: 'white',
+                fontSize: '12px',
+                color: 'var(--color-dark-gray)',
+                opacity: '0.7',
+                position: 'relative',
+                zIndex: '1'
+              }}>
+                ИЛИ
+              </span>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '0',
+                right: '0',
+                height: '1px',
+                background: 'rgba(0,0,0,0.1)',
+                zIndex: '0'
+              }} />
+            </div>
+            
+            {/* Социальные сети */}
+            <h4 style={{ 
+              fontSize: '14px',
+              letterSpacing: '2px',
+              color: 'var(--color-accent)',
+              marginBottom: '25px',
+              fontWeight: '500',
+              textTransform: 'uppercase'
+            }}>
+              НАПИШИТЕ НАМ В СОЦСЕТЯХ
+            </h4>
+            
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(3, 1fr)', 
+              gap: '15px',
+              marginBottom: '30px'
+            }}>
+              <button
+                onClick={() => handleSocialClick(contactInfo.instagramUrl)}
+                style={{
+                  padding: '15px',
+                  background: 'rgba(225, 48, 108, 0.1)',
+                  border: '1px solid rgba(225, 48, 108, 0.2)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <FaInstagram size={24} style={{ color: '#E1306C' }} />
+                <span style={{ 
+                  fontSize: '12px', 
+                  fontWeight: '500',
+                  color: 'var(--color-dark-gray)'
+                }}>
+                  Instagram
+                </span>
+              </button>
+              
+              <button
+                onClick={() => handleSocialClick(contactInfo.telegramUrl)}
+                style={{
+                  padding: '15px',
+                  background: 'rgba(255, 0, 122, 0.1)',
+                  border: '1px solid rgba(255, 0, 122, 0.2)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <FaTelegram size={24} style={{ color: '#FF007A' }} />
+                <span style={{ 
+                  fontSize: '12px', 
+                  fontWeight: '500',
+                  color: 'var(--color-dark-gray)'
+                }}>
+                  Telegram
+                </span>
+              </button>
+              
+              <button
+                onClick={() => handleSocialClick(contactInfo.whatsappUrl)}
+                style={{
+                  padding: '15px',
+                  background: 'rgba(255, 0, 122, 0.1)',
+                  border: '1px solid rgba(255, 0, 122, 0.2)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <FaWhatsapp size={24} style={{ color: '#FF007A' }} />
+                <span style={{ 
+                  fontSize: '12px', 
+                  fontWeight: '500',
+                  color: 'var(--color-dark-gray)'
+                }}>
+                  WhatsApp
+                </span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Контактная информация */}
+          <div style={{ 
+            borderTop: '1px solid rgba(0,0,0,0.1)', 
+            paddingTop: '25px'
+          }}>
+            <h3 style={{ 
+              fontSize: '14px',
+              letterSpacing: '2px',
+              color: 'var(--color-accent)',
+              marginBottom: '25px',
+              fontWeight: '500',
+              textTransform: 'uppercase'
+            }}>
+              КОНТАКТНАЯ ИНФОРМАЦИЯ
+            </h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
+                <div style={{ 
+                  width: '40px',
+                  height: '40px',
+                  background: 'var(--color-light-gray)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <FaMapMarkerAlt size={16} style={{ color: 'var(--color-accent)' }} />
+                </div>
+                <div>
+                  <div style={{ 
+                    fontSize: '11px', 
+                    letterSpacing: '1.5px', 
+                    marginBottom: '5px',
+                    color: 'var(--color-dark-gray)',
+                    opacity: '0.7',
+                    textTransform: 'uppercase'
+                  }}>
+                    АДРЕС
+                  </div>
+                  <div style={{ 
+                    fontSize: '15px', 
+                    fontWeight: '400', 
+                    color: 'var(--color-dark-gray)',
+                    lineHeight: '1.5'
+                  }}>
+                    {contactInfo.address}
+                  </div>
+                  <a 
+                    href={contactInfo.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: '13px',
+                      color: 'var(--color-accent)',
+                      textDecoration: 'none',
+                      transition: 'color 0.3s ease',
+                      display: 'inline-block',
+                      marginTop: '5px'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = '#e6006e'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
+                  >
+                    Открыть карту →
+                  </a>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
+                <div style={{ 
+                  width: '40px',
+                  height: '40px',
+                  background: 'var(--color-light-gray)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <FaPhone size={16} style={{ color: 'var(--color-accent)' }} />
+                </div>
+                <div>
+                  <div style={{ 
+                    fontSize: '11px', 
+                    letterSpacing: '1.5px', 
+                    marginBottom: '5px',
+                    color: 'var(--color-dark-gray)',
+                    opacity: '0.7',
+                    textTransform: 'uppercase'
+                  }}>
+                    ТЕЛЕФОН
+                  </div>
+                  <a 
+                    href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
+                    style={{
+                      fontSize: '15px', 
+                      fontWeight: '400', 
+                      color: 'var(--color-dark-gray)',
+                      lineHeight: '1.5',
+                      textDecoration: 'none',
+                      transition: 'color 0.3s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-dark-gray)'}
+                  >
+                    {contactInfo.phone}
+                  </a>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
+                <div style={{ 
+                  width: '40px',
+                  height: '40px',
+                  background: 'var(--color-light-gray)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <FaClock size={16} style={{ color: 'var(--color-accent)' }} />
+                </div>
+                <div>
+                  <div style={{ 
+                    fontSize: '11px', 
+                    letterSpacing: '1.5px', 
+                    marginBottom: '5px',
+                    color: 'var(--color-dark-gray)',
+                    opacity: '0.7',
+                    textTransform: 'uppercase'
+                  }}>
+                    ЧАСЫ РАБОТЫ
+                  </div>
+                  <div style={{ 
+                    fontSize: '15px', 
+                    fontWeight: '400', 
+                    color: 'var(--color-dark-gray)',
+                    lineHeight: '1.5'
+                  }}>
+                    {contactInfo.hours}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        
+        <Modal.Footer style={{ 
+          borderTop: '1px solid rgba(0,0,0,0.1)', 
+          padding: '20px 30px',
+          justifyContent: 'center'
+        }}>
+          <button
+            onClick={() => setShowModal(false)}
+            style={{
+              padding: '12px 30px',
+              background: 'transparent',
+              border: '1px solid var(--color-accent)',
+              borderRadius: '8px',
+              color: 'var(--color-accent)',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'var(--color-accent)';
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--color-accent)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Закрыть
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }
 

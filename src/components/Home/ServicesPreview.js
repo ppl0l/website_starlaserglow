@@ -32,14 +32,14 @@ function ServicesPreview() {
       number: '02',
       title: 'Аппаратный массаж',
       description: 'Современные технологии коррекции фигуры. Вакуум, кавитация, лимфодренаж.',
-      color: '#000000',
+      color: '#FF007A',
       anchor: 'massage' // Добавляем якорь
     },
     {
       number: '03',
       title: 'Косметология лица',
       description: 'Профессиональный уход за кожей. Чистки, пилинги, омоложение.',
-      color: '#000000',
+      color: '#FF007A',
       anchor: 'cosmetology' // Добавляем якорь
     }
   ];

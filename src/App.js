@@ -5,7 +5,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Layout from './components/Layout/Layout';
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
-import ContactPage from './pages/ContactPage';
 import ScrollToTop from './components/ScrollToTop';
 import './styles/App.css';
 
@@ -94,7 +93,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
-          <Route path="/contact" element={<ContactPage />} />
         </Routes>
       </Layout>
     </Router>

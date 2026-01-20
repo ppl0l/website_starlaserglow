@@ -1,14 +1,14 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaInstagram, FaTelegram, FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaInstagram, FaTelegram, FaMapMarkerAlt, FaPhone, FaEnvelope, FaCalendarAlt } from 'react-icons/fa';
 
 function Footer() {
   const navigate = useNavigate();
+  const yclientsUrl = "https://n1947028.yclients.com/";
 
   const menuItems = [
     { name: 'Главная', path: '/' },
     { name: 'Услуги и цены', path: '/services' },
-    { name: 'Контакты', path: '/contact' }
   ];
 
   const serviceItems = [
@@ -54,17 +54,24 @@ function Footer() {
               lineHeight: '1'
             }}>
               <span style={{ 
-                color: 'var(--color-white)',
+                color: '#FFFFFF',
                 display: 'inline-block'
               }}>
                 STAR
               </span>
               <span style={{ 
-                color: 'var(--color-accent)',
+                color: '#FF007A',
                 display: 'inline-block',
                 marginLeft: '5px'
               }}>
-                LASER GLOW
+                LASER
+              </span>
+              <span style={{ 
+                color: '#FFFFFF',
+                display: 'inline-block',
+                marginLeft: '5px'
+              }}>
+                GLOW
               </span>
             </div>
             <p style={{ 
@@ -171,27 +178,36 @@ function Footer() {
               <li style={{ marginBottom: '15px' }}>
                 <div className="d-flex align-items-center">
                   <FaPhone className="me-3" size={14} style={{ color: 'var(--color-accent)' }} />
-                  <a 
-                    href="tel:+79995070555" 
-                    style={{ 
-                      fontSize: '14px', 
-                      fontWeight: '300', 
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      textDecoration: 'none',
-                      transition: 'color 0.3s ease'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-white)'}
-                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-                  >
+                  <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '300', 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    cursor: 'default' // Отключаем курсор-указатель
+                  }}>
                     +7 999 507 05 55
-                  </a>
+                  </span>
                 </div>
               </li>
               <li style={{ marginBottom: '15px' }}>
                 <div className="d-flex align-items-center">
                   <FaEnvelope className="me-3" size={14} style={{ color: 'var(--color-accent)' }} />
+                  <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '300', 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    cursor: 'default' // Отключаем курсор-указатель
+                  }}>
+                    star_glow_salon@mail.ru
+                  </span>
+                </div>
+              </li>
+              <li style={{ marginBottom: '15px' }}>
+                <div className="d-flex align-items-center">
+                  <FaCalendarAlt className="me-3" size={14} style={{ color: 'var(--color-accent)' }} />
                   <a 
-                    href="mailto:star_glow_salon@mail.ru" 
+                    href={yclientsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{ 
                       fontSize: '14px', 
                       fontWeight: '300', 
@@ -202,7 +218,7 @@ function Footer() {
                     onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-white)'}
                     onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
                   >
-                    star_glow_salon@mail.ru
+                    Онлайн-запись через YCLIENTS
                   </a>
                 </div>
               </li>
