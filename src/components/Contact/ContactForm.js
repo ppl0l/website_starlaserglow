@@ -373,7 +373,7 @@ function ContactForm() {
             <div className="mt-3 text-center" style={{ 
               color: '#FF007A',
               fontSize: '14px',
-              fontStyle: 'italic',
+              fontStyle: 'normal',
               padding: '8px',
               backgroundColor: 'rgba(255, 0, 122, 0.05)',
               borderRadius: '4px'
