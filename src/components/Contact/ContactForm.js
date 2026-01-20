@@ -77,24 +77,23 @@ function ContactForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-const sendBookingRequest = async (formData) => {
-  try {
-    // Замените на ваш реальный URL с Render
-    const API_URL = 'https://beauty-bot-server.onrender.com/api/booking';
-    
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+  const sendBookingRequest = async (formData) => {
+    try {
+      const API_URL = 'https://beauty-bot-server.onrender.com/api/booking';
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
-    return data.success;
-  } catch (error) {
-    console.error('Ошибка отправки:', error);
-    return false;
-  }
-};
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      return false;
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,14 +159,12 @@ const sendBookingRequest = async (formData) => {
       setIsLoading(true);
       
       try {
-        // Отправляем данные на наш сервер
         const sent = await sendBookingRequest(formData);
         
         if (sent) {
           console.log('Form submitted successfully:', formData);
           setSubmitted(true);
           
-          // Сбрасываем форму
           setFormData({
             name: '',
             phone: '',
@@ -178,13 +175,11 @@ const sendBookingRequest = async (formData) => {
           });
           setErrors({});
           
-          // Автоматически скрываем сообщение об успехе через 5 секунд
           setTimeout(() => {
             setSubmitted(false);
             setIsLoading(false);
           }, 5000);
         } else {
-          // Если отправка не удалась
           alert('Ошибка отправки заявки. Пожалуйста, попробуйте позже или свяжитесь с нами по телефону.');
           setIsLoading(false);
         }
@@ -372,6 +367,20 @@ const sendBookingRequest = async (formData) => {
               'Отправить заявку на запись'
             )}
           </Button>
+          
+          {/* Сообщение во время отправки */}
+          {isLoading && (
+            <div className="mt-3 text-center" style={{ 
+              color: '#FF007A',
+              fontSize: '14px',
+              fontStyle: 'italic',
+              padding: '8px',
+              backgroundColor: 'rgba(255, 0, 122, 0.05)',
+              borderRadius: '4px'
+            }}>
+              Ваша заявка отправляется. Пожалуйста, не закрывайте окно, это может занять некоторое время.
+            </div>
+          )}
         </div>
         
         <div className="text-center mt-3">
@@ -380,6 +389,7 @@ const sendBookingRequest = async (formData) => {
             Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
           </small>
         </div>
+        
       </Form>
     </div>
   );
